@@ -179,13 +179,18 @@ if st.button("Run", type="primary"):
             if needs_transcript:
                 with st.spinner("Fetching transcript..."):
                     try:
-                        import tempfile, os
+                        import tempfile, os, requests as req
+                        from http.cookiejar import MozillaCookieJar
                         cookies_content = st.secrets.get("YOUTUBE_COOKIES", None)
                         if cookies_content:
                             with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
                                 f.write(cookies_content)
                                 cookies_path = f.name
-                            ytt = YouTubeTranscriptApi(cookie_path=cookies_path)
+                            session = req.Session()
+                            cookie_jar = MozillaCookieJar(cookies_path)
+                            cookie_jar.load(ignore_discard=True, ignore_expires=True)
+                            session.cookies = cookie_jar
+                            ytt = YouTubeTranscriptApi(http_client=session)
                         else:
                             ytt = YouTubeTranscriptApi()
                         transcript = ytt.fetch(video_id)
