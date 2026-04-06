@@ -27,7 +27,13 @@ def regroup_transcript(raw_text):
     return "\n\n".join(cleaned)
 
 
-def get_video_id(url):
+import os
+
+def get_secret(key):
+    try:
+        return st.secrets[key]
+    except:
+        return os.environ.get(key)
     match = re.search(r"(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})", url)
     return match.group(1) if match else None
 
@@ -167,8 +173,8 @@ if st.button("Run", type="primary"):
         if not video_id:
             st.error("Couldn't find a valid YouTube video ID in that URL.")
         else:
-            youtube_api_key = st.secrets["YOUTUBE_API_KEY"]
-            anthropic_api_key = st.secrets["ANTHROPIC_API_KEY"]
+            youtube_api_key = get_secret("YOUTUBE_API_KEY")
+            anthropic_api_key = get_secret("ANTHROPIC_API_KEY")
 
             with st.spinner("Fetching video info..."):
                 info = get_video_info(video_id, youtube_api_key)
@@ -179,26 +185,14 @@ if st.button("Run", type="primary"):
             if needs_transcript:
                 with st.spinner("Fetching transcript..."):
                     try:
-                        import tempfile, os, base64, requests as req
-                        from http.cookiejar import MozillaCookieJar
-                        cookies_b64 = st.secrets.get("YOUTUBE_COOKIES_B64", None)
-                        if cookies_b64:
-                            cookies_bytes = base64.b64decode(cookies_b64)
-                            with tempfile.NamedTemporaryFile(mode='wb', suffix='.txt', delete=False) as f:
-                                f.write(cookies_bytes)
-                                cookies_path = f.name
-                            session = req.Session()
-                            cookie_jar = MozillaCookieJar(cookies_path)
-                            cookie_jar.load(ignore_discard=True, ignore_expires=True)
-                            session.cookies = cookie_jar
-                            ytt = YouTubeTranscriptApi(http_client=session)
-                        else:
-                            ytt = YouTubeTranscriptApi()
+                        ytt = YouTubeTranscriptApi()
                         transcript = ytt.fetch(video_id)
                         raw_text = "\n".join([entry.text for entry in transcript])
                         full_text = regroup_transcript(raw_text)
                     except Exception as e:
-                        st.error(f"Debug: {str(e)}")
+                        st.error("⚠️ No transcript available for this video. This can happen when captions are disabled, the video is private, or it's in a language without auto-captions.")
+                        if any(m == "Top 10 Comments" in modes for m in modes):
+                            st.info("You can still fetch Top 10 Comments — deselect the other options and try again.")
                         st.stop()
 
             all_outputs = {}
