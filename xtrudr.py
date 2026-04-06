@@ -179,12 +179,13 @@ if st.button("Run", type="primary"):
             if needs_transcript:
                 with st.spinner("Fetching transcript..."):
                     try:
-                        import tempfile, os, requests as req
+                        import tempfile, os, base64, requests as req
                         from http.cookiejar import MozillaCookieJar
-                        cookies_content = st.secrets.get("YOUTUBE_COOKIES", None)
-                        if cookies_content:
-                            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
-                                f.write(cookies_content)
+                        cookies_b64 = st.secrets.get("YOUTUBE_COOKIES_B64", None)
+                        if cookies_b64:
+                            cookies_bytes = base64.b64decode(cookies_b64)
+                            with tempfile.NamedTemporaryFile(mode='wb', suffix='.txt', delete=False) as f:
+                                f.write(cookies_bytes)
                                 cookies_path = f.name
                             session = req.Session()
                             cookie_jar = MozillaCookieJar(cookies_path)
