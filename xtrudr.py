@@ -119,6 +119,17 @@ Do not include a header or title in your response.""",
 st.set_page_config(page_title="xtrudr", page_icon="⚡", layout="centered")
 
 st.markdown("""
+<head>
+<meta property="og:title" content="xtrudr" />
+<meta property="og:description" content="Paste any YouTube video. Get a summary, key insights, top comments, and more — in seconds." />
+<meta property="og:image" content="https://raw.githubusercontent.com/eddelage/xtrudr/main/xtrudr.jpg" />
+<meta property="og:url" content="https://xtrudr.streamlit.app" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/eddelage/xtrudr/main/xtrudr.jpg" />
+</head>
+""", unsafe_allow_html=True)
+
+st.markdown("""
 <style>
 /* Run button */
 .stButton > button {
