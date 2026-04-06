@@ -34,6 +34,8 @@ def get_secret(key):
         return st.secrets[key]
     except:
         return os.environ.get(key)
+
+def get_video_id(url):
     match = re.search(r"(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})", url)
     return match.group(1) if match else None
 
