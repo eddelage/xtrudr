@@ -174,7 +174,7 @@ if st.button("Run", type="primary"):
                         raw_text = "\n".join([entry.text for entry in transcript])
                         full_text = regroup_transcript(raw_text)
                     except Exception as e:
-                        st.error("⚠️ No transcript available for this video. This can happen when captions are disabled, the video is private, or it's in a language without auto-captions.")
+                        st.error(f"Debug: {str(e)}")
                         st.stop()
 
             all_outputs = {}
