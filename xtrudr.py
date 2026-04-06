@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from youtube_transcript_api import YouTubeTranscriptApi
 import anthropic
@@ -6,34 +7,27 @@ import re
 from datetime import datetime
 
 
+def get_secret(key):
+    try:
+        return st.secrets[key]
+    except:
+        return os.environ.get(key)
+
+
 def regroup_transcript(raw_text):
-    import re
-    # Join all chunks into one string
     text = " ".join(raw_text.split("\n"))
-    # Strip common caption artifacts like >>, [music], [applause] etc
     text = re.sub(r'>>+', '', text)
     text = re.sub(r'\[.*?\]', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
-    # Split on sentence-ending punctuation
     sentences = re.split(r'(?<=[.!?])\s+', text)
-    # Capitalize first letter of each sentence and strip whitespace
     cleaned = []
     for s in sentences:
         s = s.strip()
         if s:
             s = s[0].upper() + s[1:]
             cleaned.append(s)
-    # Join with double newline for breathing room
     return "\n\n".join(cleaned)
 
-
-import os
-
-def get_secret(key):
-    try:
-        return st.secrets[key]
-    except:
-        return os.environ.get(key)
 
 def get_video_id(url):
     match = re.search(r"(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})", url)
@@ -44,11 +38,7 @@ def get_video_info(video_id, api_key):
     try:
         response = requests.get(
             "https://www.googleapis.com/youtube/v3/videos",
-            params={
-                "part": "snippet",
-                "id": video_id,
-                "key": api_key
-            }
+            params={"part": "snippet", "id": video_id, "key": api_key}
         )
         data = response.json()
         snippet = data["items"][0]["snippet"]
@@ -59,12 +49,7 @@ def get_video_info(video_id, api_key):
             "thumbnail": snippet["thumbnails"]["medium"]["url"]
         }
     except:
-        return {
-            "title": "Unknown Title",
-            "channel": "Unknown Channel",
-            "date": "",
-            "thumbnail": None
-        }
+        return {"title": "Unknown Title", "channel": "Unknown Channel", "date": "", "thumbnail": None}
 
 
 def get_top_comments(video_id, api_key, max_results=100):
@@ -139,7 +124,6 @@ st.markdown("""
 
 st.markdown("""
 <style>
-/* Run button */
 .stButton > button {
     background-color: #8b2010 !important;
     color: #ffffff !important;
@@ -148,8 +132,6 @@ st.markdown("""
 .stButton > button:hover {
     background-color: #6b1608 !important;
 }
-
-/* Download button */
 .stDownloadButton > button {
     background-color: #3d2b1f !important;
     color: #ffffff !important;
@@ -193,13 +175,10 @@ if st.button("Run", type="primary"):
                         full_text = regroup_transcript(raw_text)
                     except Exception as e:
                         st.error("⚠️ No transcript available for this video. This can happen when captions are disabled, the video is private, or it's in a language without auto-captions.")
-                        if any(m == "Top 10 Comments" in modes for m in modes):
-                            st.info("You can still fetch Top 10 Comments — deselect the other options and try again.")
                         st.stop()
 
             all_outputs = {}
 
-            # Use a placeholder to show progressive results during Run
             results_placeholder = st.empty()
             with results_placeholder.container():
                 if info["thumbnail"]:
@@ -257,7 +236,6 @@ Comments:
                     all_outputs[mode] = output
                     st.markdown("---")
 
-            # Save everything to session state once done
             st.session_state["results"] = all_outputs
             st.session_state["info"] = info
             st.session_state["url"] = url
@@ -265,7 +243,6 @@ Comments:
             st.session_state["modes"] = modes
             results_placeholder.empty()
 
-# Render results + download from session state (persists across rerenders)
 if "results" in st.session_state:
     info = st.session_state["info"]
     all_outputs = st.session_state["results"]
