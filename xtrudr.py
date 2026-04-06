@@ -179,7 +179,15 @@ if st.button("Run", type="primary"):
             if needs_transcript:
                 with st.spinner("Fetching transcript..."):
                     try:
-                        ytt = YouTubeTranscriptApi()
+                        import tempfile, os
+                        cookies_content = st.secrets.get("YOUTUBE_COOKIES", None)
+                        if cookies_content:
+                            with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+                                f.write(cookies_content)
+                                cookies_path = f.name
+                            ytt = YouTubeTranscriptApi(cookie_path=cookies_path)
+                        else:
+                            ytt = YouTubeTranscriptApi()
                         transcript = ytt.fetch(video_id)
                         raw_text = "\n".join([entry.text for entry in transcript])
                         full_text = regroup_transcript(raw_text)

@@ -2,3 +2,4 @@
 .DS_Store
 .streamlit/secrets.toml
 old/
+cookies.txt
