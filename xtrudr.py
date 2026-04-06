@@ -1,4 +1,3 @@
-import os
 import streamlit as st
 from youtube_transcript_api import YouTubeTranscriptApi
 import anthropic
@@ -11,7 +10,7 @@ def get_secret(key):
     try:
         return st.secrets[key]
     except:
-        return os.environ.get(key)
+        return None
 
 
 def regroup_transcript(raw_text):
@@ -169,7 +168,21 @@ if st.button("Run", type="primary"):
             if needs_transcript:
                 with st.spinner("Fetching transcript..."):
                     try:
-                        ytt = YouTubeTranscriptApi()
+                        proxy_host = get_secret("PROXY_HOST")
+                        proxy_port = get_secret("PROXY_PORT")
+                        proxy_user = get_secret("PROXY_USERNAME")
+                        proxy_pass = get_secret("PROXY_PASSWORD")
+
+                        if proxy_host and proxy_user:
+                            from youtube_transcript_api.proxies import WebshareProxyConfig
+                            ytt = YouTubeTranscriptApi(
+                                proxy_config=WebshareProxyConfig(
+                                    proxy_username=proxy_user,
+                                    proxy_password=proxy_pass,
+                                )
+                            )
+                        else:
+                            ytt = YouTubeTranscriptApi()
                         transcript = ytt.fetch(video_id)
                         raw_text = "\n".join([entry.text for entry in transcript])
                         full_text = regroup_transcript(raw_text)
