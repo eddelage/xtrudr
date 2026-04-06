@@ -87,20 +87,26 @@ Include key ideas, frameworks, and concepts worth remembering.
 Format as a numbered list with a brief explanation for each.
 Do not include a header or title in your response.""",
 
-    "Links & Resources": """Extract only concrete, specific resources from this transcript:
-- Actual URLs or websites mentioned
-- Specific tools or software products
-- Books or publications by name
-- Specific platforms or apps
+    "Links & Resources": """Extract only resources that were meaningfully discussed in this transcript — not just mentioned in passing.
 
-Do NOT include: people's names, company names (unless they are the resource itself), vague references, or anything that isn't a specific actionable resource.
+Include ONLY:
+- Specific websites or URLs
+- Named tools or software products with clear context
+- Books or publications discussed in detail
+- Specific platforms or apps explained or recommended
+
+EXCLUDE anything that was:
+- Mentioned briefly without explanation
+- A person's name or company name (unless the company IS the resource)
+- Vague or generic (e.g. "social media", "a website")
+- Something you're not confident exists
 
 For each item:
 - Name it clearly
-- If it's a URL that may have been garbled in transcription, suggest the correct version
-- One line on why it was mentioned
+- Provide your best guess at the URL if applicable
+- One sentence on why it was mentioned and why it matters
 
-Keep the list tight. If fewer than 10 clear resources exist, only list what's there.
+If fewer than 3 clear resources exist, say so rather than padding the list.
 Do not include a header or title in your response.""",
 
     "Top 10 Comments": None,
