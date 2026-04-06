@@ -192,9 +192,7 @@ if st.button("Run", type="primary"):
                         raw_text = "\n".join([entry.text for entry in transcript])
                         full_text = regroup_transcript(raw_text)
                     except Exception as e:
-                        st.error("⚠️ No transcript available for this video. This can happen when captions are disabled, the video is private, or it's in a language without auto-captions.")
-                        if any(m == "Top 10 Comments" in modes for m in modes):
-                            st.info("You can still fetch Top 10 Comments — deselect the other options and try again.")
+                        st.error(f"Debug: {str(e)}")
                         st.stop()
 
             all_outputs = {}
