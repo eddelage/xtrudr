@@ -153,6 +153,7 @@ modes = st.multiselect("What do you want?", list(PROMPTS.keys()), default=list(P
 st.caption("All sections selected by default — click the ✕ to remove any you don't need.")
 
 if st.button("Run", type="primary"):
+    st.session_state.pop("results", None)
     if not url:
         st.warning("Paste a YouTube URL first.")
     elif not modes:
