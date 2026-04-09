@@ -174,20 +174,18 @@ if st.button("Run", type="primary"):
             if needs_transcript:
                 with st.spinner("Fetching transcript..."):
                     try:
-                        proxy_host = get_secret("PROXY_HOST")
-                        proxy_port = get_secret("PROXY_PORT")
                         proxy_user = get_secret("PROXY_USERNAME")
                         proxy_pass = get_secret("PROXY_PASSWORD")
 
-                        if proxy_host and proxy_user:
-                            from youtube_transcript_api.proxies import WebshareProxyConfig
-                            ytt = YouTubeTranscriptApi(
-                                proxy_config=WebshareProxyConfig(
-                                    proxy_username=proxy_user,
-                                    proxy_password=proxy_pass,
-                                    proxy_port=443,
-                                )
-                            )
+                        if proxy_user:
+                            import requests as req
+                            proxy_url = f"http://{proxy_user}:{proxy_pass}@p.webshare.io:80"
+                            session = req.Session()
+                            session.proxies = {
+                                "http": proxy_url,
+                                "https": proxy_url,
+                            }
+                            ytt = YouTubeTranscriptApi(http_client=session)
                         else:
                             ytt = YouTubeTranscriptApi()
                         transcript = ytt.fetch(video_id)
