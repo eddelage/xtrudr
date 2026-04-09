@@ -300,8 +300,6 @@ if "results" in st.session_state:
     download_content = f"Channel: {info['channel']}\nTitle: {info['title']}\nDate: {info['date']}\nSource: {url}\nExported: {timestamp}\n\n"
     for mode, output in all_outputs.items():
         download_content += f"{'='*50}\n{mode.upper()}\n{'='*50}\n\n{output}\n\n"
-    if full_text and "Full Transcript" not in modes:
-        download_content += f"{'='*50}\nFULL TRANSCRIPT\n{'='*50}\n\n{full_text}"
 
     st.download_button(
         label="Download All",
