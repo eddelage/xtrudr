@@ -3,3 +3,4 @@
 .streamlit/secrets.toml
 old/
 cookies.txt
+.streamlit/secrets.toml.save

@@ -185,6 +185,7 @@ if st.button("Run", type="primary"):
                                 proxy_config=WebshareProxyConfig(
                                     proxy_username=proxy_user,
                                     proxy_password=proxy_pass,
+                                    proxy_port=443,
                                 )
                             )
                         else:
