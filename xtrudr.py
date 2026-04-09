@@ -220,8 +220,8 @@ if st.button("Run", type="primary"):
                     elif mode == "Top 10 Comments":
                         with st.spinner("Fetching comments..."):
                             comments = get_top_comments(video_id, youtube_api_key)
-                        if comments is None:
-                            st.warning("Comments are disabled or unavailable for this video.")
+                        if comments is None or len(comments) == 0:
+                            st.warning("No comments available for this video.")
                             output = "Comments unavailable."
                         else:
                             comments_text = "\n\n".join([f"[{c['likes']} likes] {c['text']}" for c in comments])
@@ -287,7 +287,7 @@ if "results" in st.session_state:
                 st.text(output)
         elif mode == "Top 10 Comments":
             if output == "Comments unavailable.":
-                st.warning("Comments are disabled or unavailable for this video.")
+                st.warning("No comments available for this video.")
             else:
                 st.markdown(output.replace("$", "\\$"))
         else:
