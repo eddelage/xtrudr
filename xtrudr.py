@@ -222,7 +222,7 @@ if st.button("Run", type="primary"):
                             comments = get_top_comments(video_id, youtube_api_key)
                         if comments is None or len(comments) == 0:
                             st.warning("No comments available for this video.")
-                            output = "Comments unavailable."
+                            output = "No comments available for this video."
                         else:
                             comments_text = "\n\n".join([f"[{c['likes']} likes] {c['text']}" for c in comments])
                             client = anthropic.Anthropic(api_key=anthropic_api_key)
@@ -286,7 +286,7 @@ if "results" in st.session_state:
             with st.expander("Show Full Transcript"):
                 st.text(output)
         elif mode == "Top 10 Comments":
-            if output == "Comments unavailable.":
+            if output == "No comments available for this video.":
                 st.warning("No comments available for this video.")
             else:
                 st.markdown(output.replace("$", "\\$"))
